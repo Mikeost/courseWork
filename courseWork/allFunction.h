@@ -9,23 +9,24 @@
 #include <locale.h>
 
 // Размерность структуры предприятия
-#define NUMBER_MAX_WORKSHOPS 1024                  // Максимальное кол-во цехов
+#define NUMBER_MAX_WORKSHOPS 10                  // Максимальное кол-во цехов
 #define NUMBER_WORKSHOPS 4                         // Размер массива для кол-ва цехов
 
 // Размерность структуры цеха
 #define NAME_WORKSHOP_LEN 50                       // Размер массива для наименования цеха
-#define NUMBER_WORKER 5                            // Размер массива для кол-ва работников
+#define NUMBER_WORKER 50                            // Размер массива для кол-ва работников
 
 // Размерность структуры работника
 #define NUMBER_MONTH 12                            // Размер массива для кол-ва месяцев
 #define SURNAME_NAME_PATRONOMYC_WORKER_LEN 100     // Размер массива для ФИО работника
 
 // Действия меню
-#define MENU_ADD 1                                 // Добавление записи
-#define MENU_DELETE 2                              // Удаление записи
-#define MENU_SHOW_ALL 3                            // Вывод всех записей
+#define MENU_SHOW_ALL 1                                 // Добавление записи
+#define MENU_ADD 2                              // Удаление записи
+#define MENU_DELETE 3                            // Вывод всех записей
 #define MENU_CREATE_BACKUP_FILE 4                  // Создание резервного файла
 #define MENU_RESTORE_BACKUP_FILE 5                 // Восстановление базы данных из резервного файла
+#define MENU_CORRECT_NUMBER_WORKER 6               // Корректировка кол-ва работников
 #define MENU_EXIT 0                                // Выход из программы
 
 // Структура "Работник"
@@ -39,16 +40,18 @@ typedef struct{
 typedef struct{
     char nameWorkshop[NAME_WORKSHOP_LEN];
     workerStructure numberWorker[NUMBER_WORKER];
+    int countNumberWorker;
 } workshopStructure;
 
 // Структура "Предприятие"
 typedef struct{
     workshopStructure numberWorkshops[NUMBER_MAX_WORKSHOPS];
-} company;
+    int countNumberWorkshops;
+} companyStructure;
 
-company arrayCompany;
+companyStructure company;
 
-int countNewRecordWorkshops = NUMBER_WORKSHOPS;
+//int countNewRecordWorkshops = 4;
 
 // Титульная страница
 void titlePage(void);
@@ -63,22 +66,22 @@ void clearStdin(void);
 void clearScreen(void);
 
 // Добавление новой записи
-int addNewRecord(int countNewRecordWorkshops, company arrayCompany);
+int addNewRecord(int countNewRecordWorkshops, companyStructure company);
 
 // Вывод всей базы данных
-void printDataBase(int countNewRecordWorkshops, company arrayCompany);
+void printDataBase(int countNewRecordWorkshops, companyStructure company);
 
 // Удаление записи по наименованию
-int deleteRecords(int countNewRecordWorkshops, company arrayCompany);
+int deleteRecords(int countNewRecordWorkshops, companyStructure company);
 
 // Создание бэкап-файла
-int createBackupFile(int countNewRecordWorkshops, company arrayCompany);
+int createBackupFile(int countNewRecordWorkshops, companyStructure company);
 
 // Восстаноление данных из бэкап-файла
 int restoreBackupFile(int countRestore, int newRecordWorkshops);
 
-// Изменение кол-ва работников
-void correctCountWorker(int countNewRecordWorkshops, company arrayCompany);
+// Корректировка кол-ва работников по наименованию цеха
+companyStructure correctCountWorker(int countNewRecordWorkshops, companyStructure company);
 
 FILE *fileDataBase;
 FILE *fileLogs;
@@ -147,7 +150,7 @@ void clearScreen(){
     printf("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
 }
 
-int addNewRecord(int countNewRecordWorkshops, company arrayCompany){
+int addNewRecord(int countNewRecordWorkshops, companyStructure company){
     int i, j, k;
     
     time_t realTime = time(NULL);
@@ -191,17 +194,64 @@ int addNewRecord(int countNewRecordWorkshops, company arrayCompany){
      printf("\nВвод новой записи:\n");
      for(i = countNewRecordWorkshops; i < countNewRecordWorkshops + 1; i++){
          printf("Введите название цеха: ");
-            gets(arrayCompany.numberWorkshops[i].nameWorkshop);
+            gets(company.numberWorkshops[i].nameWorkshop);
             fprintf(fileLogs, "\n\n%s: Запись нового названия %d-го цеха\n\n", ctime(&realTime), i+1);
-         for(j = 0; j < NUMBER_WORKER; j++){
+         for(j = 0; j < 5; j++){
              printf("Введите ФИО рабочего: ");
-                gets(arrayCompany.numberWorkshops[i].numberWorker[j].surnameNamePatronymic);
-                fprintf(fileLogs, "\n\n%s: Запись нового ФИО %d-го работника\n\n", ctime(&realTime), j+1); 
+                gets(company.numberWorkshops[i].numberWorker[j].surnameNamePatronymic);
+                fprintf(fileLogs, "\n\n%s: Запись нового ФИО %d-го работника\n\n", ctime(&realTime), j+1);
              for(k = 0; k < NUMBER_MONTH; k++){
-                 printf("Введите кол-во рабочих дней %d-го месяца: ", k+1); scanf("%d", &arrayCompany.numberWorkshops[i].numberWorker[j].numberOfWorkDay[k]);
-                 fprintf(fileLogs, "\n\n%s: Запись количества рабочих дней %d-го работника\n\n", ctime(&realTime), j+1);
-                 printf("Введите З/П %d-го месяца: ", k+1); scanf("%f", &arrayCompany.numberWorkshops[i].numberWorker[j].money[k]);
+                 printf("Введите кол-во рабочих дней %d-го месяца: ", k+1); scanf("%d", &company.numberWorkshops[i].numberWorker[j].numberOfWorkDay[k]);
                  clearStdin();
+                 fprintf(fileLogs, "\n\n%s: Запись количества рабочих дней %d-го работника\n\n", ctime(&realTime), j+1);
+                 printf("Введите З/П %d-го месяца: ", k+1); scanf("%f", &company.numberWorkshops[i].numberWorker[j].money[k]);
+                 clearStdin();
+                 fprintf(fileLogs, "\n\n%s: Запись З/П %d-го работника\n\n", ctime(&realTime), j+1);
+             }
+         }
+     }
+    }
+    
+    if(action == 1 && action2 == 2){
+    // Добавление новой записи
+     printf("\nВвод новой записи:\n");
+     for(i = countNewRecordWorkshops; i < countNewRecordWorkshops + 1; i++){
+         printf("Введите название цеха: ");
+            gets(company.numberWorkshops[i].nameWorkshop);
+            fprintf(fileLogs, "\n\n%s: Запись нового названия %d-го цеха\n\n", ctime(&realTime), i+1);
+         for(j = 0; j < 5; j++){
+             printf("Введите ФИО рабочего: ");
+                gets(company.numberWorkshops[i].numberWorker[j].surnameNamePatronymic);
+                fprintf(fileLogs, "\n\n%s: Запись нового ФИО %d-го работника\n\n", ctime(&realTime), j+1);
+             for(k = 0; k < NUMBER_MONTH; k++){
+                 printf("Кол-во рабочих дней %d-го месяца: ", k+1); company.numberWorkshops[i].numberWorker[j].numberOfWorkDay[k] = rand()%(28-1+1)+1;
+                 printf("%d\n", company.numberWorkshops[i].numberWorker[j].numberOfWorkDay[k]);
+                 fprintf(fileLogs, "\n\n%s: Запись количества рабочих дней %d-го работника\n\n", ctime(&realTime), j+1);
+                 printf("Введите З/П %d-го месяца: ", k+1); scanf("%f", &company.numberWorkshops[i].numberWorker[j].money[k]);
+                 clearStdin();
+                 fprintf(fileLogs, "\n\n%s: Запись З/П %d-го работника\n\n", ctime(&realTime), j+1);
+             }
+         }
+     }
+    }
+    
+    if(action == 2 && action2 == 1){
+    // Добавление новой записи
+     printf("\nВвод новой записи:\n");
+     for(i = countNewRecordWorkshops; i < countNewRecordWorkshops + 1; i++){
+         printf("Введите название цеха: ");
+            gets(company.numberWorkshops[i].nameWorkshop);
+            fprintf(fileLogs, "\n\n%s: Запись нового названия %d-го цеха\n\n", ctime(&realTime), i+1);
+         for(j = 0; j < 5; j++){
+             printf("Введите ФИО рабочего: ");
+                gets(company.numberWorkshops[i].numberWorker[j].surnameNamePatronymic);
+                fprintf(fileLogs, "\n\n%s: Запись нового ФИО %d-го работника\n\n", ctime(&realTime), j+1);
+             for(k = 0; k < NUMBER_MONTH; k++){
+                 printf("Введите кол-во рабочих дней %d-го месяца: ", k+1); scanf("%d", &company.numberWorkshops[i].numberWorker[j].numberOfWorkDay[k]);
+                 clearStdin();
+                 fprintf(fileLogs, "\n\n%s: Запись количества рабочих дней %d-го работника\n\n", ctime(&realTime), j+1);
+                 printf("З/П %d-го месяца: ", k+1); company.numberWorkshops[i].numberWorker[j].money[k] = rand()%(20-10+1)+10;
+                 printf("%.3f\n", company.numberWorkshops[i].numberWorker[j].money[k]);
                  fprintf(fileLogs, "\n\n%s: Запись З/П %d-го работника\n\n", ctime(&realTime), j+1);
              }
          }
@@ -213,18 +263,18 @@ int addNewRecord(int countNewRecordWorkshops, company arrayCompany){
          printf("\nВвод новой записи:\n");
          for(i = countNewRecordWorkshops; i < countNewRecordWorkshops + 1; i++){
              printf("Введите название цеха: ");
-                gets(arrayCompany.numberWorkshops[i].nameWorkshop);
+                gets(company.numberWorkshops[i].nameWorkshop);
                 fprintf(fileLogs, "\n\n%s: Запись нового названия %d-го цеха\n\n", ctime(&realTime), i+1);
-             for(j = 0; j < NUMBER_WORKER; j++){
+             for(j = 0; j < 5; j++){
                  printf("Введите ФИО рабочего: ");
-                    gets(arrayCompany.numberWorkshops[i].numberWorker[j].surnameNamePatronymic);
+                    gets(company.numberWorkshops[i].numberWorker[j].surnameNamePatronymic);
                     fprintf(fileLogs, "\n\n%s: Запись нового ФИО %d-го работника\n\n", ctime(&realTime), j+1);
                  for(k = 0; k < NUMBER_MONTH; k++){
-                     printf("Кол-во рабочих дней %d-го месяца: ", k+1); arrayCompany.numberWorkshops[i].numberWorker[j].numberOfWorkDay[k] = rand()%(28-1+1)+1;
-                     printf("%d\n", arrayCompany.numberWorkshops[i].numberWorker[j].numberOfWorkDay[k]);
+                     printf("Кол-во рабочих дней %d-го месяца: ", k+1); company.numberWorkshops[i].numberWorker[j].numberOfWorkDay[k] = rand()%(28-1+1)+1;
+                     printf("%d\n", company.numberWorkshops[i].numberWorker[j].numberOfWorkDay[k]);
                      fprintf(fileLogs, "\n\n%s: Запись количества рабочих дней %d-го работника\n\n", ctime(&realTime), j+1);
-                     printf("З/П %d-го месяца: ", k+1); arrayCompany.numberWorkshops[i].numberWorker[j].money[k] = rand()%(20-10+1)+10;
-                     printf("%.3f\n", arrayCompany.numberWorkshops[i].numberWorker[j].money[k]);
+                     printf("З/П %d-го месяца: ", k+1); company.numberWorkshops[i].numberWorker[j].money[k] = rand()%(20-10+1)+10;
+                     printf("%.3f\n", company.numberWorkshops[i].numberWorker[j].money[k]);
                      fprintf(fileLogs, "\n\n%s: Запись З/П %d-го работника\n\n", ctime(&realTime), j+1);
                  }
              }
@@ -233,8 +283,8 @@ int addNewRecord(int countNewRecordWorkshops, company arrayCompany){
     
     
     // Запись новой структуры в файл
-    fileDataBase = fopen("dataBase.txt", "ab");
-    fwrite(&arrayCompany.numberWorkshops[countNewRecordWorkshops], sizeof(arrayCompany.numberWorkshops[countNewRecordWorkshops]), 1, fileDataBase);
+    fileDataBase = fopen("dataBase.bin", "ab");
+    fwrite(&company.numberWorkshops[countNewRecordWorkshops], sizeof(company.numberWorkshops[company.countNumberWorkshops]), 1, fileDataBase);
     fclose(fileDataBase);
     fprintf(fileLogs, "\n\n%s: Процесс добавления новой структуры в файл\n\n", ctime(&realTime));
     
@@ -246,7 +296,7 @@ int addNewRecord(int countNewRecordWorkshops, company arrayCompany){
     return countNewRecordWorkshops;
 }
 
-void printDataBase(int countNewRecordWorkshops, company arrayCompany){
+void printDataBase(int countNewRecordWorkshops, companyStructure company){
     int i, j, k, countRecord = 1, countMonth = 0;
     const char *arrayMonth[12] = {"январь", "февраль", "март", "апрель", "май", "июнь", "июль", "август", "сентябрь", "октябрь", "ноябрь", "декабрь"};
     
@@ -256,29 +306,23 @@ void printDataBase(int countNewRecordWorkshops, company arrayCompany){
     fprintf(fileLogs, "\n\n%s: Вызов функции вывода базы данных\n\n", ctime(&realTime));
     
     // Чтение файла
-    fileDataBase = fopen("dataBase.txt", "rb");
-        fread(&arrayCompany, sizeof(company), 1, fileDataBase);
+    fileDataBase = fopen("dataBase.bin", "rb");
+        fread(&company, sizeof(company), 1, fileDataBase);
     fclose(fileDataBase);
     fprintf(fileLogs, "\n\n%s: Чтение базы данных из файла\n\n", ctime(&realTime));
-    
-    int arrCountWorker[countNewRecordWorkshops];
-    
-   /* for(i = 0; i < countNewRecordWorkshops; i++){
-        arrCountWorker[i] = sizeof(arrayCompany.numberWorkshops[i]/arrayCompany.numberWorkshops[i].numberWorker[0]);
-    } */
     
     // Вывод всех данных
     printf("\n\t\tБАЗА ДАННЫХ\n");
     for(i = 0; i < countNewRecordWorkshops; i++){
-        for(j = 0; j < NUMBER_WORKER; j++){
+        for(j = 0; j < company.numberWorkshops[i].countNumberWorker; j++){
             for(k = 0; k < NUMBER_MONTH; k++){
             printf("\n=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=++=+=+=+=+=+=+=+=+=+=+\n");
             printf("Запись %d\n", countRecord);
-                printf("Название цеха: %s\n", arrayCompany.numberWorkshops[i].nameWorkshop);
-                printf("ФИО Рабочего: %s\n", arrayCompany.numberWorkshops[i].numberWorker[j].surnameNamePatronymic);
+                printf("Название цеха: %s\n", company.numberWorkshops[i].nameWorkshop);
+                printf("ФИО Рабочего: %s\n", company.numberWorkshops[i].numberWorker[j].surnameNamePatronymic);
                 printf("Месяц: %s\n", arrayMonth[countMonth]);
-                printf("Кол-во рабочих дней: %d\n", arrayCompany.numberWorkshops[i].numberWorker[j].numberOfWorkDay[k]);
-                printf("З/П: %.3f грн.\n", arrayCompany.numberWorkshops[i].numberWorker[j].money[k]);
+                printf("Кол-во рабочих дней: %d\n", company.numberWorkshops[i].numberWorker[j].numberOfWorkDay[k]);
+                printf("З/П: %.3f грн.\n", company.numberWorkshops[i].numberWorker[j].money[k]);
             countMonth++;
             countRecord++;
             }
@@ -289,8 +333,8 @@ void printDataBase(int countNewRecordWorkshops, company arrayCompany){
     fclose(fileLogs);
 }
 
-int deleteRecords(int countNewRecordWorkshops, company arrayCompany){
-    char searchNameWorkshop[NAME_WORKSHOP_LEN]; int countBuf = 0;
+int deleteRecords(int countNewRecordWorkshops, companyStructure company){
+    char searchNameWorkshop[NAME_WORKSHOP_LEN];
     
     time_t realTime = time(NULL);
     FILE *fileLogs;
@@ -298,15 +342,15 @@ int deleteRecords(int countNewRecordWorkshops, company arrayCompany){
     fprintf(fileLogs, "\n\n%s: Вызов функции удаления цеха\n\n", ctime(&realTime));
     
     // Чтение файла
-    fileDataBase = fopen("dataBase.txt", "rb");
-        fread(&arrayCompany, sizeof(company), 1, fileDataBase);
+    fileDataBase = fopen("dataBase.bin", "rb");
+        fread(&company, sizeof(company), 1, fileDataBase);
     fclose(fileDataBase);
     
     if(countNewRecordWorkshops > 0){
     // Вывод на экран список существующих цехов
     printf("\nСуществующие цеха:\n");
     for(int i = 0; i < countNewRecordWorkshops; i++){
-        printf("Цех %d: %s\n", i+1, arrayCompany.numberWorkshops[i].nameWorkshop);
+        printf("Цех %d: %s\n", i+1, company.numberWorkshops[i].nameWorkshop);
     }
     
     // Ввод наименования цеха, кототорое нужно удалить
@@ -314,14 +358,13 @@ int deleteRecords(int countNewRecordWorkshops, company arrayCompany){
     fprintf(fileLogs, "\n\n%s: Ввод названия удаляемого цеха\n\n", ctime(&realTime));
     // Поиск и удаление структуры по наименованию цеха
     for(int i = 0; i < countNewRecordWorkshops; i++){
-        if(strcmp(searchNameWorkshop, arrayCompany.numberWorkshops[i].nameWorkshop) != 0){
+        if(strcmp(searchNameWorkshop, company.numberWorkshops[i].nameWorkshop) != 0){
             }
             else{
                 for(int j = i; j < countNewRecordWorkshops; j++){
-                    arrayCompany.numberWorkshops[j] = arrayCompany.numberWorkshops[j+1];
+                    company.numberWorkshops[j] = company.numberWorkshops[j+1];
                     }
-                countBuf++;
-                countNewRecordWorkshops -= countBuf;
+                countNewRecordWorkshops -= 1;
                 fprintf(fileLogs, "\n\n%s: Удаление введеного цеха\n\n", ctime(&realTime));
                 clearScreen();
                 printf("\n-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-\n");
@@ -331,9 +374,9 @@ int deleteRecords(int countNewRecordWorkshops, company arrayCompany){
         }
     
     // Запись измененной базы данных в файл
-    fileDataBase = fopen("dataBase.txt", "wb");
+    fileDataBase = fopen("dataBase.bin", "wb");
     for(int i = 0; i < countNewRecordWorkshops; i++){
-        fwrite(&arrayCompany.numberWorkshops[i], sizeof(arrayCompany.numberWorkshops[i]), 1, fileDataBase);
+        fwrite(&company.numberWorkshops[i], sizeof(company.numberWorkshops[i]), 1, fileDataBase);
     }
     fclose(fileDataBase);
     fprintf(fileLogs, "\n\n%s: Запись базы данных с удаленным цехом в файл\n\n", ctime(&realTime));
@@ -341,14 +384,14 @@ int deleteRecords(int countNewRecordWorkshops, company arrayCompany){
     else{
         clearScreen();
         printf("\n--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-\n");
-        printf("\t\tЗАПИСЕЙ НЕТ!\t");
+        printf("\t\t\tЗАПИСЕЙ НЕТ!\t");
         printf("\n-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-\n");
     }
     fclose(fileLogs);
     return countNewRecordWorkshops;
 }
 
-int createBackupFile(int countNewRecordWorkshops, company arrayCompany){
+int createBackupFile(int countNewRecordWorkshops, companyStructure company){
     FILE *backupFile;
     
     time_t realTime = time(NULL);
@@ -357,15 +400,17 @@ int createBackupFile(int countNewRecordWorkshops, company arrayCompany){
     fprintf(fileLogs, "\n\n%s: Вызов функции записи резервного файла\n\n", ctime(&realTime));
     
     // Чтение базы данных
-    fileDataBase = fopen("dataBase.txt", "rb");
-        fread(&arrayCompany, sizeof(company), 1, fileDataBase);
+    fileDataBase = fopen("dataBase.bin", "rb");
+    for(int i = 0; i < countNewRecordWorkshops; i++){
+        fread(&company.numberWorkshops[i], sizeof(company), 1, fileDataBase);
+    }
     fclose(fileDataBase);
     fprintf(fileLogs, "\n\n%s: Чтение базы данных для записи в резервный файл\n\n", ctime(&realTime));
     
     // Запись базы данных в бэкап-файл
-    backupFile = fopen("backup.txt", "wb");
+    backupFile = fopen("backup.bin", "wb");
     for(int i = 0; i < countNewRecordWorkshops; i++){
-        fwrite(&arrayCompany.numberWorkshops[i], sizeof(arrayCompany.numberWorkshops[i]), 1, backupFile);
+        fwrite(&company.numberWorkshops[i], sizeof(company.numberWorkshops[i]), 1, backupFile);
     }
     fclose(backupFile);
     fprintf(fileLogs, "\n\n%s: Запись базы данных в резервный файл\n\n", ctime(&realTime));
@@ -393,13 +438,13 @@ int restoreBackupFile(int countRestore, int countNewRecordWorkshops){
     
     // Восстановление базы данных
     if(strcmp(action, "+") == 0){
-        backupFile = fopen("backup.txt", "rb");
-        fread(&arrayCompany, sizeof(company), 1, fileDataBase);
+        backupFile = fopen("backup.bin", "rb");
+        fread(&company, sizeof(company), 1, fileDataBase);
         fclose(backupFile);
     fprintf(fileLogs, "\n\n%s: Чтение базы данных для восстановления из резервного файла\n\n", ctime(&realTime));
     
-    fileDataBase = fopen("dataBase.txt", "wb");
-        fread(&arrayCompany, sizeof(company), 1, fileDataBase);
+    fileDataBase = fopen("dataBase.bin", "wb");
+        fread(&company, sizeof(company), 1, fileDataBase);
     fclose(fileDataBase);
     fprintf(fileLogs, "\n\n%s: Запись восстановленных данных из резервного файла\n\n", ctime(&realTime));
     return countRestore;
@@ -418,33 +463,97 @@ int restoreBackupFile(int countRestore, int countNewRecordWorkshops){
     fclose(fileLogs);
 }
 
-/*void correctCountWorker(int countNewRecordWorkshops, company arrayCompany){
+companyStructure correctCountWorker(int countNewRecordWorkshops, companyStructure company){
+    time_t realTime = time(NULL);
+    FILE *fileLogs;
+    fileLogs = fopen("logs.txt", "a+t");
+    
+    fileDataBase = fopen("dataBase.bin", "rb");
     for(int i = 0; i < countNewRecordWorkshops; i++){
-        printf("Цех %d: %s\n", i+1, arrayCompany.numberWorkshops[i].nameWorkshop);
+        fread(&company.numberWorkshops[i], sizeof(company.numberWorkshops[i]), 1, fileDataBase);
     }
+    fclose(fileDataBase);
+    
+    for(int i = 0; i < countNewRecordWorkshops; i++){
+        printf("Цех %d: %s\n", i+1, company.numberWorkshops[i].nameWorkshop);
+    }
+    
     char searchNameWorkshop[NAME_WORKSHOP_LEN];
-    int arrayCountWorker[countNewRecordWorkshops];
-    int countWorker = 0;
-    
-    for(int i = 0; i < countNewRecordWorkshops; i++){
-        for(int j = 0; j < NUMBER_WORKER; j++){
-            if(arrayCompany.numberWorkshops[i].numberWorker != 0){
-            countWorker++;
-            }
-        }
-        arrayCountWorker[i] = countWorker;
-        countWorker = 0;
-    }
-    
+    int indexEdit = 0;
     printf("\nВведите название цеха:\n"); gets(searchNameWorkshop);
     for(int i = 0; i < countNewRecordWorkshops; i++){
-        if(strcmp(searchNameWorkshop, arrayCompany.numberWorkshops[i].nameWorkshop) == 0){
+        if(strcmp(searchNameWorkshop, company.numberWorkshops[i].nameWorkshop) == 0){
             printf("Цех: %s\n", searchNameWorkshop);
-            printf("Кол-во работников в цехе: %d", );
+            printf("Кол-во работников в цехе: %d\n", company.numberWorkshops[i].countNumberWorker);
+            indexEdit = i;
             }
         }
     
+    int action = 0; int countDelete = 0;
     
-} */
+    while(action != 1 && action != 2){
+        printf("1 - удаление работника\n");
+        printf("2 - добавление работника\n");
+        scanf("%d", &action);
+        clearStdin(); clearScreen();
+    }
+    
+    if(action == 1){
+            for(int j = 0; j < company.numberWorkshops[indexEdit].countNumberWorker; j++){
+                printf("Работник %d: %s\n", j+1, company.numberWorkshops[indexEdit].numberWorker[j].surnameNamePatronymic);
+            }
+        
+        printf("Введите номер работника, которого хотите удалить: "); scanf("%d", &countDelete);
+        while((countDelete > company.numberWorkshops[indexEdit].countNumberWorker) && (countDelete < 1)){
+            printf("Введите номер работника, которого хотите удалить: "); scanf("%d", &countDelete);
+            clearStdin();
+        }
+        
+        for(int i = 0; i < countNewRecordWorkshops; i++){
+               if(i == indexEdit){
+               for(int j = 0; j < company.numberWorkshops[indexEdit].countNumberWorker; j++){
+                   if(j == (countDelete-1)){
+                       for(int k = j; k < company.numberWorkshops[i].countNumberWorker; k++){
+                           company.numberWorkshops[i].numberWorker[k] = company.numberWorkshops[i].numberWorker[k+1];
+                       }
+                       company.numberWorkshops[i].countNumberWorker--;
+                   }
+               }
+               }
+        }
+        fileDataBase = fopen("dataBase.bin", "wb");
+        fwrite(&company, sizeof(company), 1, fileDataBase);
+        fclose(fileDataBase);
+                       
+}
+    if(action == 2){
+         // Добавление новой записи
+         printf("\nВвод новой записи:\n");
+         for(int i = indexEdit; i < indexEdit + 1; i++){
+             for(int j = company.numberWorkshops[indexEdit].countNumberWorker; j < company.numberWorkshops[indexEdit].countNumberWorker + 1; j++){
+                 printf("Введите ФИО рабочего: ");
+                    gets(company.numberWorkshops[i].numberWorker[j].surnameNamePatronymic);
+                    fprintf(fileLogs, "\n\n%s: Запись нового ФИО %d-го работника\n\n", ctime(&realTime), j+1);
+                 for(int k = 0; k < NUMBER_MONTH; k++){
+                     printf("Кол-во рабочих дней %d-го месяца: ", k+1); company.numberWorkshops[i].numberWorker[j].numberOfWorkDay[k] = rand()%(28-1+1)+1;
+                     printf("%d\n", company.numberWorkshops[i].numberWorker[j].numberOfWorkDay[k]);
+                     fprintf(fileLogs, "\n\n%s: Запись количества рабочих дней %d-го работника\n\n", ctime(&realTime), j+1);
+                     printf("З/П %d-го месяца: ", k+1); company.numberWorkshops[i].numberWorker[j].money[k] = rand()%(20-10+1)+10;
+                     printf("%.3f\n", company.numberWorkshops[i].numberWorker[j].money[k]);
+                     fprintf(fileLogs, "\n\n%s: Запись З/П %d-го работника\n\n", ctime(&realTime), j+1);
+                 }
+             }
+         }
+        company.numberWorkshops[indexEdit].countNumberWorker++;
+    }
+
+    fileDataBase = fopen("dataBase.bin", "wb");
+    fwrite(&company, sizeof(company), 1, fileDataBase);
+    fclose(fileDataBase);
+    
+    fclose(fileLogs);
+    
+    return company;
+}
 
 #endif /* allFunction_h */
