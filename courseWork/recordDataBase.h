@@ -1,10 +1,3 @@
-//
-//  recordDataBase.h
-//  courseWork
-//
-//  Created by mikeo on 21.04.2021.
-//
-
 #ifndef recordDataBase_h
 #define recordDataBase_h
 
