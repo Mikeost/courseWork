@@ -1,6 +1,5 @@
 #include "allFunction.h"
 #include "recordDataBase.h"
-
     
 int main() {
     setlocale(LC_ALL, "Russian");
@@ -99,6 +98,10 @@ int main() {
         
         // Запуск подпрограммы
         switch(action){
+            case MENU_SHOW_ALL:
+                clearScreen();
+                printDataBase(company.countNumberWorkshops, company);
+                break;
             case MENU_ADD:
                 clearScreen();
                 company.countNumberWorkshops = addNewRecord(company.countNumberWorkshops, company);
@@ -106,10 +109,6 @@ int main() {
             case MENU_DELETE:
                 clearScreen();
                 company.countNumberWorkshops = deleteRecords(company.countNumberWorkshops, company);
-                break;
-            case MENU_SHOW_ALL:
-                clearScreen();
-                printDataBase(company.countNumberWorkshops, company);
                 break;
             case MENU_CREATE_BACKUP_FILE:
                 clearScreen();
