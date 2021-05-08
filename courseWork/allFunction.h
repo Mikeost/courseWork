@@ -161,12 +161,18 @@ int addNewRecord(int countNewRecordWorkshops, companyStructure company){
     
     int action, action2;
     
+    // Чтение файла
+    fileDataBase = fopen("dataBase.bin", "rb");
+        fread(&company, sizeof(companyStructure), 1, fileDataBase);
+    fclose(fileDataBase);
+    
     printf("Заполнение З/П: \n");
     printf("1 - ручное заполнение\n");
     printf("2 - автоматическое заполнение\n");
     scanf("%d", &action);
     clearStdin(); clearScreen();
     
+
     while(action != 1 && action != 2){
         printf("НЕВЕРНЫЙ ВВОД\n");
         printf("1 - ручное заполнение\n");
@@ -174,12 +180,14 @@ int addNewRecord(int countNewRecordWorkshops, companyStructure company){
         scanf("%d", &action);
         clearStdin(); clearScreen();
     }
+
     
     printf("Заполнение кол-ва рабочих дней: \n");
     printf("1 - ручное заполнение\n");
     printf("2 - автоматическое заполнение\n");
     scanf("%d", &action2);
     clearStdin(); clearScreen();
+
     
     while(action2 != 1 && action2 != 2){
         printf("НЕВЕРНЫЙ ВВОД\n");
@@ -188,6 +196,7 @@ int addNewRecord(int countNewRecordWorkshops, companyStructure company){
         scanf("%d", &action2);
         clearStdin(); clearScreen();
     }
+    
     
     if(action == 1 && action2 == 1){
     // Добавление новой записи
@@ -260,7 +269,7 @@ int addNewRecord(int countNewRecordWorkshops, companyStructure company){
     
     if(action == 2 && action2 == 2){
         // Добавление новой записи
-         printf("\nВвод новой записи:\n");
+        printf("\nВвод новой записи:\n");
          for(i = countNewRecordWorkshops; i < countNewRecordWorkshops + 1; i++){
              printf("Введите название цеха: ");
                 gets(company.numberWorkshops[i].nameWorkshop);
@@ -281,12 +290,12 @@ int addNewRecord(int countNewRecordWorkshops, companyStructure company){
          }
     }
     
+    company.numberWorkshops[countNewRecordWorkshops].countNumberWorker = 5;
     
-    // Запись новой структуры в файл
-    fileDataBase = fopen("dataBase.bin", "ab");
-    fwrite(&company.numberWorkshops[countNewRecordWorkshops], sizeof(company.numberWorkshops[company.countNumberWorkshops]), 1, fileDataBase);
+    fileDataBase = fopen("dataBase.bin", "wb");
+    fwrite(&company, sizeof(company), 1, fileDataBase);
     fclose(fileDataBase);
-    fprintf(fileLogs, "\n\n%s: Процесс добавления новой структуры в файл\n\n", ctime(&realTime));
+    fprintf(fileLogs, "\n\n%s: Запись нового цеха в файл\n\n", ctime(&realTime));
     
     countNewRecordWorkshops++;
     fclose(fileLogs);
@@ -305,9 +314,10 @@ void printDataBase(int countNewRecordWorkshops, companyStructure company){
     fileLogs = fopen("logs.txt", "a+t");
     fprintf(fileLogs, "\n\n%s: Вызов функции вывода базы данных\n\n", ctime(&realTime));
     
+    
     // Чтение файла
     fileDataBase = fopen("dataBase.bin", "rb");
-        fread(&company, sizeof(company), 1, fileDataBase);
+        fread(&company, sizeof(companyStructure), 1, fileDataBase);
     fclose(fileDataBase);
     fprintf(fileLogs, "\n\n%s: Чтение базы данных из файла\n\n", ctime(&realTime));
     
@@ -336,6 +346,8 @@ void printDataBase(int countNewRecordWorkshops, companyStructure company){
 int deleteRecords(int countNewRecordWorkshops, companyStructure company){
     char searchNameWorkshop[NAME_WORKSHOP_LEN];
     
+    bool isNameFalse = true;
+    
     time_t realTime = time(NULL);
     FILE *fileLogs;
     fileLogs = fopen("logs.txt", "a+t");
@@ -361,6 +373,7 @@ int deleteRecords(int countNewRecordWorkshops, companyStructure company){
         if(strcmp(searchNameWorkshop, company.numberWorkshops[i].nameWorkshop) != 0){
             }
             else{
+                isNameFalse = false;
                 for(int j = i; j < countNewRecordWorkshops; j++){
                     company.numberWorkshops[j] = company.numberWorkshops[j+1];
                     }
@@ -373,6 +386,13 @@ int deleteRecords(int countNewRecordWorkshops, companyStructure company){
             }
         }
     
+        if(isNameFalse){
+            clearScreen();
+            printf("\n-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-\n");
+            printf("\t\tДАННОГО ЦЕХА НЕ СУЩЕСТВУЕТ\t");
+            printf("\n-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-\n");
+        }
+        
     // Запись измененной базы данных в файл
     fileDataBase = fopen("dataBase.bin", "wb");
     for(int i = 0; i < countNewRecordWorkshops; i++){
@@ -401,17 +421,13 @@ int createBackupFile(int countNewRecordWorkshops, companyStructure company){
     
     // Чтение базы данных
     fileDataBase = fopen("dataBase.bin", "rb");
-    for(int i = 0; i < countNewRecordWorkshops; i++){
-        fread(&company.numberWorkshops[i], sizeof(company), 1, fileDataBase);
-    }
+        fread(&company, sizeof(companyStructure), 1, fileDataBase);
     fclose(fileDataBase);
     fprintf(fileLogs, "\n\n%s: Чтение базы данных для записи в резервный файл\n\n", ctime(&realTime));
     
     // Запись базы данных в бэкап-файл
     backupFile = fopen("backup.bin", "wb");
-    for(int i = 0; i < countNewRecordWorkshops; i++){
-        fwrite(&company.numberWorkshops[i], sizeof(company.numberWorkshops[i]), 1, backupFile);
-    }
+        fwrite(&company, sizeof(companyStructure), 1, backupFile);
     fclose(backupFile);
     fprintf(fileLogs, "\n\n%s: Запись базы данных в резервный файл\n\n", ctime(&realTime));
     fclose(fileLogs);
@@ -467,6 +483,9 @@ companyStructure correctCountWorker(int countNewRecordWorkshops, companyStructur
     time_t realTime = time(NULL);
     FILE *fileLogs;
     fileLogs = fopen("logs.txt", "a+t");
+    fprintf(fileLogs, "\n\n%s: Вызов функции корректировки по названию цеха\n\n", ctime(&realTime));
+    int action = 0; int countDelete = 0;
+    bool isNameFalse = true;
     
     fileDataBase = fopen("dataBase.bin", "rb");
     for(int i = 0; i < countNewRecordWorkshops; i++){
@@ -481,22 +500,30 @@ companyStructure correctCountWorker(int countNewRecordWorkshops, companyStructur
     char searchNameWorkshop[NAME_WORKSHOP_LEN];
     int indexEdit = 0;
     printf("\nВведите название цеха:\n"); gets(searchNameWorkshop);
+    fprintf(fileLogs, "\n\n%s: Ввод название цеха для корректировки\n\n", ctime(&realTime));
     for(int i = 0; i < countNewRecordWorkshops; i++){
         if(strcmp(searchNameWorkshop, company.numberWorkshops[i].nameWorkshop) == 0){
+            isNameFalse = false;
             printf("Цех: %s\n", searchNameWorkshop);
-            printf("Кол-во работников в цехе: %d\n", company.numberWorkshops[i].countNumberWorker);
+            printf("Кол-во работников в цехе: %d\n\n", company.numberWorkshops[i].countNumberWorker);
             indexEdit = i;
+            while(action != 1 && action != 2){
+                printf("1 - удаление работника\n");
+                printf("2 - добавление работника\n\n");
+                scanf("%d", &action);
+                clearStdin(); clearScreen();
+            }
             }
         }
     
-    int action = 0; int countDelete = 0;
-    
-    while(action != 1 && action != 2){
-        printf("1 - удаление работника\n");
-        printf("2 - добавление работника\n");
-        scanf("%d", &action);
-        clearStdin(); clearScreen();
+    if(isNameFalse){
+        clearScreen();
+        printf("\n-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-\n");
+        printf("\t\tДАННОГО ЦЕХА НЕ СУЩЕСТВУЕТ\t");
+        printf("\n-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-\n");
+        fprintf(fileLogs, "\n\n%s: Ввод названия несуществующего цеха\n\n", ctime(&realTime));
     }
+    
     
     if(action == 1){
             for(int j = 0; j < company.numberWorkshops[indexEdit].countNumberWorker; j++){
@@ -508,6 +535,8 @@ companyStructure correctCountWorker(int countNewRecordWorkshops, companyStructur
             printf("Введите номер работника, которого хотите удалить: "); scanf("%d", &countDelete);
             clearStdin();
         }
+        
+        fprintf(fileLogs, "\n\n%s: Ввод номера удаляемого работника\n\n", ctime(&realTime));
         
         for(int i = 0; i < countNewRecordWorkshops; i++){
                if(i == indexEdit){
@@ -529,6 +558,7 @@ companyStructure correctCountWorker(int countNewRecordWorkshops, companyStructur
     if(action == 2){
          // Добавление новой записи
          printf("\nВвод новой записи:\n");
+        fprintf(fileLogs, "\n\n%s: Ввод новой записи\n\n", ctime(&realTime));
          for(int i = indexEdit; i < indexEdit + 1; i++){
              for(int j = company.numberWorkshops[indexEdit].countNumberWorker; j < company.numberWorkshops[indexEdit].countNumberWorker + 1; j++){
                  printf("Введите ФИО рабочего: ");
@@ -550,7 +580,7 @@ companyStructure correctCountWorker(int countNewRecordWorkshops, companyStructur
     fileDataBase = fopen("dataBase.bin", "wb");
     fwrite(&company, sizeof(company), 1, fileDataBase);
     fclose(fileDataBase);
-    
+    fprintf(fileLogs, "\n\n%s: Запись в файл\n\n", ctime(&realTime));
     fclose(fileLogs);
     
     return company;
