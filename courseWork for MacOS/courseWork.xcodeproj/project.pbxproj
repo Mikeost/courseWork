@@ -25,7 +25,6 @@
 /* Begin PBXFileReference section */
 		8E5DDC4826302A1E0050A47E /* recordDataBase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = recordDataBase.h; sourceTree = "<group>"; };
 		8E5DDC4A26302DFD0050A47E /* allFunction.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = allFunction.h; sourceTree = "<group>"; };
-		8E8375A826417B1100ACEDF3 /* correctCountWorker.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = correctCountWorker.h; sourceTree = "<group>"; };
 		8EAA93C5261B9FA7007877A1 /* courseWork */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = courseWork; sourceTree = BUILT_PRODUCTS_DIR; };
 		8EAA93C8261B9FA7007877A1 /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -44,7 +43,6 @@
 		8EAA93BC261B9FA7007877A1 = {
 			isa = PBXGroup;
 			children = (
-				8E8375A826417B1100ACEDF3 /* correctCountWorker.h */,
 				8E5DDC4A26302DFD0050A47E /* allFunction.h */,
 				8E5DDC4826302A1E0050A47E /* recordDataBase.h */,
 				8EAA93C7261B9FA7007877A1 /* courseWork */,
