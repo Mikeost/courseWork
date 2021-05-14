@@ -1,3 +1,10 @@
+//
+//  allFunction.h
+//  courseWork
+//
+//  (C) Created by Mikeost corp. 
+//
+
 #ifndef allFunction_h
 #define allFunction_h
 

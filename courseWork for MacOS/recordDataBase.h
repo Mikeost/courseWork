@@ -2,7 +2,7 @@
 //  recordDataBase.h
 //  courseWork
 //
-//  Created by mikeo on 21.04.2021.
+//  (C) Created by Mikeost corp. 
 //
 
 #ifndef recordDataBase_h

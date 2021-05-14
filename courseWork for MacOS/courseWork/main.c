@@ -1,3 +1,10 @@
+//
+//  main.c
+//  courseWork
+//
+//  (C) Created by Mikeost corp. 
+//
+
 #include "allFunction.h"
 #include "recordDataBase.h"
     
