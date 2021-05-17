@@ -1,0 +1,17 @@
+# depslib dependency file v1.0
+1621223295 source:c:\users\ostap\desktop\coursework\courseworkforwindows\main.c
+	"allFunction.h"
+	"recordDataBase.h"
+	"Windows.h"
+
+1621223890 c:\users\ostap\desktop\coursework\courseworkforwindows\allfunction.h
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<stdbool.h>
+	<time.h>
+	<locale.h>
+
+1621217892 c:\users\ostap\desktop\coursework\courseworkforwindows\recorddatabase.h
+	"allFunction.h"
+
