@@ -548,7 +548,9 @@ companyStructure correctCountWorker(int countNewRecordWorkshops, companyStructur
     bool isNameFalse = true;
 
     fileDataBase = fopen("dataBase.bin", "rb");
-        fread(&company, sizeof(company), 1, fileDataBase);
+    for(int i = 0; i < countNewRecordWorkshops; i++){
+        fread(&company.numberWorkshops[i], sizeof(company.numberWorkshops[i]), 1, fileDataBase);
+    }
     fclose(fileDataBase);
 
     for(int i = 0; i < countNewRecordWorkshops; i++){
