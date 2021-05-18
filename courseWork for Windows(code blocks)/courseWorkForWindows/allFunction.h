@@ -585,21 +585,21 @@ companyStructure correctCountWorker(int countNewRecordWorkshops, companyStructur
         }
 
     if(action == 0){
-        fileDataBase = fopen("dataBase.bin", "wb");
+       /* fileDataBase = fopen("dataBase.bin", "wb");
                 fwrite(&company, sizeof(company), 1, fileDataBase);
-        fclose(fileDataBase);
+        fclose(fileDataBase); */
      return company;
     }
 
-    if(isNameFalse){
+    if(isNameFalse == true){
         system("cls");
         printf("\n-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-\n");
         printf("\t\tДАННОГО ЦЕХА НЕ СУЩЕСТВУЕТ\t");
         printf("\n-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-\n");
         fprintf(fileLogs, "\n\n%s: Ввод названия несуществующего цеха\n\n", ctime(&realTime));
-        fileDataBase = fopen("dataBase.bin", "wb");
+       /*  fileDataBase = fopen("dataBase.bin", "wb");
                 fwrite(&company, sizeof(company), 1, fileDataBase);
-        fclose(fileDataBase);
+        fclose(fileDataBase); */
         return company;
     }
 
