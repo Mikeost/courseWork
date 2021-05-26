@@ -16,21 +16,21 @@
 #include <locale.h>
 
 // Размерность структуры предприятия
-#define NUMBER_MAX_WORKSHOPS 10                  // Максимальное кол-во цехов
+#define NUMBER_MAX_WORKSHOPS 10                    // Максимальное кол-во цехов
 #define NUMBER_WORKSHOPS 4                         // Размер массива для кол-ва цехов
 
 // Размерность структуры цеха
 #define NAME_WORKSHOP_LEN 50                       // Размер массива для наименования цеха
-#define NUMBER_WORKER 50                            // Размер массива для кол-ва работников
+#define NUMBER_WORKER 50                           // Размер массива для кол-ва работников
 
 // Размерность структуры работника
 #define NUMBER_MONTH 12                            // Размер массива для кол-ва месяцев
 #define SURNAME_NAME_PATRONOMYC_WORKER_LEN 100     // Размер массива для ФИО работника
 
 // Действия меню
-#define MENU_SHOW_ALL 1                                 // Добавление записи
-#define MENU_ADD 2                              // Удаление записи
-#define MENU_DELETE 3                            // Вывод всех записей
+#define MENU_SHOW_ALL 1                            // Добавление записи
+#define MENU_ADD 2                                 // Удаление записи
+#define MENU_DELETE 3                              // Вывод всех записей
 #define MENU_CREATE_BACKUP_FILE 4                  // Создание резервного файла
 #define MENU_RESTORE_BACKUP_FILE 5                 // Восстановление базы данных из резервного файла
 #define MENU_CORRECT_NUMBER_WORKER 6               // Корректировка кол-ва работников
@@ -57,8 +57,6 @@ typedef struct{
 } companyStructure;
 
 companyStructure company;
-
-//int countNewRecordWorkshops = 4;
 
 // Титульная страница
 void titlePage(void);
@@ -99,7 +97,7 @@ void titlePage(){
         printf("*\t\t\t\t\t\t\t\t\t\t*\n");
         printf("*\t\t\tМІНІСТЕРСТВО ОСВІТИ І НАУКИ УКРАЇНИ\t\t\t*\n");
         printf("*\t\t\tВСП ДРУЖКІВСЬКИЙ ФАХОВИЙ КОЛЕДЖ ДДМА\t\t\t*\n");
-        printf("*\t\t\t\t\t\t\t\t\t\t*");
+        printf("*\t\t\t\t\t\t\t\t\t\t*\n");
         printf("*\tГРУПА ІПЗ-19\t\t\t\tСПЕЦІАЛЬНІСТЬ 121 «Інженерія \t*\n");
         printf("*\t\t\t\t\t\tпрограмного забезпечення»\t*\n");
         printf("*\t\t\t\t\t\t\t\t\t\t*\n");
@@ -115,7 +113,7 @@ void titlePage(){
         printf("*\t\t\t\t\t\t\t\t\t\t*\n");
         printf("*\tВиконав студент: Остащенко М. Д.\t\t________________\t*\n");
         printf("*\t\t\t\t\t\t\t    (підпис)\t\t*\n");
-        printf("*\t\t\t\t\t\t\t\t\t\t*");
+        printf("*\t\t\t\t\t\t\t\t\t\t*\n");
         printf("*\tКерівник практики: Багач С. Г.\t\t\t________________\t*\n");
         printf("*\t\t\t\t\t\t\t    (підпис)\t\t*\n");
         printf("*\t\t\t\t\t\t\t\t\t\t*\n");
@@ -127,7 +125,7 @@ void titlePage(){
         printf("*\t    _________________________________________________________\t\t*\n");
         printf("*\t   |\tДата захисту\t|     Оцінка\t|  Підпис викладача  |\t\t*\n");
         printf("*\t   |____________________|_______________|____________________|\t\t*\n");
-        printf("*\t   |\t\t\t|\t\t|\t\t     |\t\t*");
+        printf("*\t   |\t\t\t|\t\t|\t\t     |\t\t*\n");
         printf("*\t   |____________________|_______________|____________________|\t\t*\n");
         printf("*\t\t\t\t\t\t\t\t\t\t*\n");
         printf("*\t\t\t\t\t\t\t\t\t\t*\n");
@@ -153,11 +151,6 @@ void clearStdin() {
     int symb;
     while ((symb = getchar()) != '\n' && symb != EOF) { }
 }
-
-void clearScreen(){
-    printf("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
-}
-
 int addNewRecord(int countNewRecordWorkshops, companyStructure company){
     int i, j, k;
 
@@ -522,6 +515,10 @@ int restoreBackupFile(int countRestore, int countNewRecordWorkshops){
         fread(&company, sizeof(company), 1, fileDataBase);
     fclose(fileDataBase);
     fprintf(fileLogs, "\n\n%s: Запись восстановленных данных из резервного файла\n\n", ctime(&realTime));
+    system("cls");
+    printf("\n-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-\n");
+    printf("\tВОССТАНОВЛЕНИЕ ДАННЫХ ПРОШЛО УСПЕШНО!\t");
+    printf("\n-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-\n");
     return countRestore;
     }
     else{
@@ -532,10 +529,6 @@ int restoreBackupFile(int countRestore, int countNewRecordWorkshops){
         fprintf(fileLogs, "\n\n%s: Отмена восстановления\n\n", ctime(&realTime));
         return countNewRecordWorkshops;
     }
-    system("cls");
-    printf("\n-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-\n");
-    printf("\tВОССТАНОВЛЕНИЕ ДАННЫХ ПРОШЛО УСПЕШНО!\t");
-    printf("\n-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-\n");
     fclose(fileLogs);
 }
 

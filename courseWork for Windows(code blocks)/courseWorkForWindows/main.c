@@ -10,7 +10,6 @@
 #include "Windows.h"
 
 int main() {
-   // setlocale(LC_ALL, "Russian");
     SetConsoleCP(1251);
     SetConsoleOutputCP(1251);
     srand((unsigned int)time(NULL));
@@ -34,13 +33,13 @@ int main() {
             fwrite(&company, sizeof(company), 1, fileDataBase);
     fclose(fileDataBase);
 
-    fprintf(fileLogs, "\n\n%s: Запись умалчиваемого массива структур в файл\n\n", ctime(&realTime));
+    fprintf(fileLogs, "\n\n%s: Запись базы данных в файл\n\n", ctime(&realTime));
 
-    // Считываем информацию из файла в массив
+    // Считываем информацию из файла
     fileDataBase = fopen("dataBase.bin", "rb");
         fread(&company, sizeof(companyStructure), 1, fileDataBase);
     fclose(fileDataBase);
-    fprintf(fileLogs, "\n\n%s: Чтение умалчиваемого массива структур из файла\n\n", ctime(&realTime));
+    fprintf(fileLogs, "\n\n%s: Чтение базы данных по умолчанию из файла\n\n", ctime(&realTime));
 
     // Вывод фио, отчисления в фонд
     printf("\n\n\t\t\tВывод отчислений в фонд\n");
@@ -66,7 +65,7 @@ int main() {
     fclose(fileDataBase);
     fprintf(fileLogs, "\n\n%s: Запись данных о фондовых отчислениях в файл\n\n", ctime(&realTime));
 
-    // Считываем второй файл в массив
+    // Считываем второй файл
     fileDataBase = fopen("twoDataBase.bin", "rb");
     for(i = 0; i < company.countNumberWorkshops; i++){
         for(j = 0; j < company.numberWorkshops[i].countNumberWorker; j++){
